@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Mapa 3D da OUS Somos Centro: relevo, edificações existentes (IDE BHGEO) e empreendimentos licenciados, com vista do observador.">
+<link rel="icon" href="assets/icone.svg" type="image/svg+xml">
+<title>Mapa 3D OUS</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.css">
+<link rel="stylesheet" href="assets/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body class="map-page">
+<header class="topbar">
+  <div class="brand">
+    <b>Monitoramento · OUS Somos Centro</b>
+    <span>Edificações existentes (IDE BHGEO) e empreendimentos licenciados pela OUS</span>
+  </div>
+  <nav class="nav">
+    <a href="index.html">Indicadores</a>
+    <a href="mapa.html" class="active">Mapa 3D</a>
+  </nav>
+</header>
+
+<div class="map-shell">
+  <aside class="panel">
+    <section>
+      <h4>Licenciados pela OUS</h4>
+      <div class="totals">
+        <div class="kpi"><div class="lbl">Empreendimentos</div><div class="val" id="t-n">0</div></div>
+        <div class="kpi"><div class="lbl">Unidades</div><div class="val" id="t-u">0</div></div>
+        <div class="kpi"><div class="lbl">Área construída</div><div class="val" id="t-a">0</div></div>
+        <div class="kpi"><div class="lbl">Receptor / Gerador</div><div class="val" id="t-rg">0 / 0</div></div>
+      </div>
+    </section>
+
+    <section>
+      <h4>Enviar envelopes</h4>
+      <div class="row">
+        <label for="tipo-up" style="font-size:12.5px">Tipo, se o arquivo não informar:</label>
+        <select id="tipo-up"><option>Receptor</option><option>Gerador</option></select>
+      </div>
+      <label class="drop" id="drop">
+        <input type="file" id="file" accept=".zip,.kml,.kmz" multiple hidden>
+        Arraste ou clique para enviar <b>.zip</b>, <b>.kml</b> ou <b>.kmz</b><br>
+        <span style="font-size:11.5px">no formato do <code>envelopes.zip</code> (lote + envelope 3D por pavimento)</span>
+      </label>
+      <div class="row" style="justify-content:space-between">
+        <span id="up-msg" style="font-size:12px;color:var(--text-muted)"></span>
+        <button class="btn small" id="reset">Restaurar exemplos</button>
+      </div>
+    </section>
+
+    <section>
+      <h4>Empreendimentos</h4>
+      <div class="lic-list" id="lic-list"></div>
+    </section>
+
+    <section>
+      <h4>Camadas</h4>
+      <div class="row"><input type="checkbox" id="ly-lic" checked><span class="swatch" style="background:#d7191c"></span><label for="ly-lic">Licenciados OUS (3D)</label></div>
+      <div class="row"><input type="checkbox" id="ly-ed" checked><span class="swatch" style="background:#a3a3a3"></span><label for="ly-ed">Edificações existentes (3D)</label></div>
+      <div class="row"><input type="checkbox" id="ly-hip" checked><span class="swatch" style="background:linear-gradient(90deg,#3a9a4f,#e9d27a,#b5651d)"></span><label for="ly-hip">Hipsometria</label>
+        <select id="hip-fonte" style="margin-left:auto;font-size:12px"><option value="hip">WMS BHGEO</option><option value="hip2">Realçada (MDT)</option></select></div>
+      <div class="row" style="padding-left:24px"><input type="range" id="op-hip" min="0" max="100" value="55"><span id="op-hip-v" style="width:34px;font-size:12px">55%</span></div>
+      <div class="row"><input type="checkbox" id="ly-ter" checked><span class="swatch" style="background:linear-gradient(135deg,#6b5a43,#e8dcc4)"></span><label for="ly-ter">Relevo 3D (MDT)</label></div>
+      <div class="row" style="padding-left:24px"><span style="font-size:12px;color:var(--text-muted)">Exagero vertical</span><input type="range" id="exag" min="1" max="3" step="0.25" value="1"><span id="exag-v" style="width:34px;font-size:12px">1×</span></div>
+      <div class="row"><input type="checkbox" id="ly-hs" checked><span class="swatch" style="background:linear-gradient(135deg,#fff,#555)"></span><label for="ly-hs">Sombreamento do relevo</label></div>
+      <div class="row"><input type="checkbox" id="ly-mask" checked><span class="swatch" style="background:rgba(255,255,255,.6)"></span><label for="ly-mask">Esmaecer fora da OUS</label></div>
+      <div class="row"><input type="checkbox" id="ly-base" checked><span class="swatch" style="background:#efe9dc"></span><label for="ly-base">Mapa base (BHMap)</label></div>
+      <div class="row" style="margin-top:10px"><button class="btn small" id="home">Voltar à área da OUS</button><button class="btn small" id="top">Vista 2D / 3D</button></div>
+    </section>
+
+    <section style="font-size:11.5px;color:var(--text-muted)">
+      Fontes: WMS <code>MAPA_BASE</code> e <code>MAPA_HIPSOMETRICO</code>; WFS <code>EDIFICACAO</code> (altura estimada <code>ALT_EST_MAXMDE_MINMDT</code>) — IDE BHGEO/PBH. Perímetro: <code>planejamentourbano_pu</code> – área de operação urbana. Edificações carregadas por recorte da tela (na vista ampla, só os recortes da área da OUS).
+    </section>
+  </aside>
+  <div id="map"><div class="status-line" id="status">Carregando…</div></div>
+</div>
+
+<script src="assets/mapa.js"></script>
+<script type="module" src="assets/observador.js"></script>
+</body>
+</html>

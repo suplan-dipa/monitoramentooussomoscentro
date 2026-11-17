@@ -1,0 +1,20 @@
+{
+  "z": 15,
+  "x0": 12381,
+  "y0": 18232,
+  "x1": 12387,
+  "y1": 18236,
+  "width": 1792,
+  "height": 1280,
+  "encoding": "terrarium",
+  "min": 800,
+  "max": 1190,
+  "fontes": [
+    "WFS CURVA_DE_NIVEL_5M (COTA)",
+    "WFS EDIFICACAO (MEDIA_MDT)"
+  ],
+  "pontos": 533000,
+  "curvas": 422870,
+  "edificacoes": 137683,
+  "gerado_em": "2026-11-16T23:38:34.583Z"
+}

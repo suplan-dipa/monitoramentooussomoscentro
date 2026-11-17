@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Painel de indicadores núcleo (M01–M10) da Operação Urbana Simplificada Somos Centro, Belo Horizonte — protótipo com dados fictícios.">
+<link rel="icon" href="assets/icone.svg" type="image/svg+xml">
+<title>Monitoramento OUS Somos Centro</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <b>Monitoramento · OUS Somos Centro</b>
+    <span>Lei nº 12.151/2026 · art. 1º, § 8º · protótipo SMPU/SUPLAN</span>
+  </div>
+  <nav class="nav">
+    <a href="index.html" class="active">Indicadores</a>
+    <a href="mapa.html">Mapa 3D</a>
+  </nav>
+</header>
+<div class="mock-banner">Protótipo: todos os valores desta página são <b>fictícios</b> e servem só para ver como os resultados seriam apresentados. Núcleo de 10 indicadores-meta (M01–M10) da matriz v2 de 20/10/2026.</div>
+
+<main class="wrap">
+  <section class="toolbar">
+    <label>Trimestre de referência
+      <select id="quarter"></select>
+    </label>
+    <label>Gráficos
+      <span class="seg" id="mode">
+        <button data-m="tri" class="on">Por trimestre</button>
+        <button data-m="acc">Acumulado</button>
+      </span>
+    </label>
+    <label>Horizonte da meta
+      <select id="horizon" disabled><option>H2 – 2 anos (8 trimestres)</option></select>
+    </label>
+    <div class="spacer"></div>
+    <div class="summary" id="summary"></div>
+  </section>
+
+  <section class="grid" id="grid"></section>
+
+  <details class="table-view">
+    <summary>Tabela de dados (indicadores e números brutos, por trimestre)</summary>
+    <div class="tbl-scroll"><table class="data" id="tbl"></table></div>
+  </details>
+
+  <p class="note">Leitura: para indicadores de <b>fluxo</b> (M01, M04) o valor do trimestre é o que foi entregue no período e o acumulado é a soma desde T0. Para indicadores de <b>nível</b> (taxas, índices, razões) o valor do trimestre é a variação no período e o acumulado é a posição no fim do trimestre. A meta H2 é distribuída de forma linear entre a linha de base e o 8º trimestre; situação: em trajetória ≥ 80% da meta do período, atenção entre 50% e 80%, abaixo &lt; 50%. M10 é salvaguarda: alerta abaixo do limiar.</p>
+</main>
+
+<script src="assets/indicadores_dados.js"></script>
+<script src="assets/indicadores.js"></script>
+</body>
+</html>
